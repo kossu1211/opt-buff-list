@@ -273,9 +273,33 @@ grouped[item.point].push(item.name);
     function updateProgress() {
       const total = items.length;
 
-      const checked = Object.values(checkedItems)
-        .filter(Boolean)
-        .length;
+     function updateProgress() {
+
+  const total = items.length;
+
+  let checked = 0;
+
+  items.forEach(item => {
+
+    const key =
+      `${item.point}-${item.name}`;
+
+    if (checkedItems[key]) {
+      checked++;
+    }
+
+  });
+
+  const percent = total > 0
+    ? Math.round((checked / total) * 100)
+    : 0;
+
+  document.getElementById("progressText").textContent =
+    `${checked} / ${total} (${percent}%)`;
+
+  document.getElementById("progressBar").style.width =
+    `${percent}%`;
+}
 
       const percent = total > 0
         ? Math.round((checked / total) * 100)
@@ -327,9 +351,9 @@ function render() {
 
     const total = entries.length;
 
-    const checked = entries.filter(
-      item => checkedItems[item]
-    ).length;
+   const checked = entries.filter(
+  item => checkedItems[`${point}-${item}`]
+).length;
 
     const percent = total
       ? Math.round((checked / total) * 100)
