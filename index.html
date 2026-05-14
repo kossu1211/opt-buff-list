@@ -454,8 +454,14 @@ function render() {
                     : "text-slate-700"
                 }">
 
- ${entry.replace(/^(武器|盾|鎧|アクセ|ペット)/, (type) => {
+ ${(() => {
+  const match = entry.match(/^(武器|盾|鎧|アクセ|ペット)/);
+  if (!match) return entry;
+
+  const type = match[1];
   const badge = getTypeBadge(type);
+
+  const rest = entry.replace(type, "");
 
   return `
     <span
@@ -472,8 +478,9 @@ function render() {
     >
       ${type}
     </span>
+    ${rest}
   `;
-})}
+})()}
 
             
 
