@@ -216,17 +216,7 @@
 
     const items = [];
 
-    /* grouped生成 */
-const grouped = {};
-
-items.forEach(item => {
-
-  if (!grouped[item.point]) {
-    grouped[item.point] = [];
-  }
-
-  grouped[item.point].push(item.name);
-});
+   
 
 /* 要素取得 */
 const content =
@@ -259,7 +249,20 @@ let sectionStates = JSON.parse(
       }
     });
 
-    function saveData() {
+    /* grouped生成 */
+const grouped = {};
+
+items.forEach(item => {
+
+  if (!grouped[item.point]) {
+    grouped[item.point] = [];
+  }
+
+  grouped[item.point].push(item.name);
+
+});
+
+    
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(checkedItems)
