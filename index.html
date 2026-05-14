@@ -206,10 +206,9 @@
 
     const STORAGE_KEY = "opt-buff-checklist";
 
-    let checkedItems = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "{}"
-    );
-
+  let checkedItems = JSON.parse(
+  localStorage.getItem("opt-buff-checklist") || "{}"
+);
     const lines = rawData
       .split("\n")
       .map(line => line.trim())
@@ -236,6 +235,12 @@
         JSON.stringify(checkedItems)
       );
     }
+    function saveChecklist() {
+  localStorage.setItem(
+    "opt-buff-checklist",
+    JSON.stringify(checkedItems)
+  );
+}
 
     function updateProgress() {
       const total = items.length;
@@ -255,21 +260,14 @@
         `${percent}%`;
     }
 
- function render() {
+function render() {
 
   const search = searchInput.value.toLowerCase();
-   <!-- 既存script内の searchInput の下に追加 -->
 
-const typeFilter = document.getElementById("typeFilter");
-const showUncheckedOnly =
-  document.getElementById("showUncheckedOnly");
-
-/* 開閉状態保存 */
-let sectionStates = JSON.parse(
-  localStorage.getItem("xp-buff-sections") || "{}"
-);
   const selectedType = typeFilter.value;
-  const uncheckedOnly = showUncheckedOnly.checked;
+
+  const uncheckedOnly =
+    showUncheckedOnly.checked;
 
   content.innerHTML = "";
 
@@ -299,7 +297,6 @@ let sectionStates = JSON.parse(
 
     if (filtered.length === 0) return;
 
-    /* ポイント別進捗 */
     const total = entries.length;
 
     const checked = entries.filter(
@@ -310,7 +307,6 @@ let sectionStates = JSON.parse(
       ? Math.round((checked / total) * 100)
       : 0;
 
-    /* 初期状態 */
     let isOpen;
 
     if (sectionStates[point] !== undefined) {
@@ -335,6 +331,7 @@ let sectionStates = JSON.parse(
           <div class="flex justify-between items-center">
 
             <div>
+
               <div class="text-xl font-bold text-blue-600">
                 ${point}
               </div>
@@ -342,6 +339,7 @@ let sectionStates = JSON.parse(
               <div class="text-sm text-slate-500 mt-1">
                 ${checked} / ${total} (${percent}%)
               </div>
+
             </div>
 
             <div class="text-sm text-slate-500">
@@ -350,7 +348,6 @@ let sectionStates = JSON.parse(
 
           </div>
 
-          <!-- ポイント別進捗バー -->
           <div class="w-full h-3 bg-white rounded-full overflow-hidden mt-3">
 
             <div
@@ -403,7 +400,6 @@ let sectionStates = JSON.parse(
     content.appendChild(section);
   });
 
-  /* チェックボックス保存 */
   document.querySelectorAll(
     "input[type=checkbox][data-item]"
   ).forEach(box => {
@@ -421,6 +417,24 @@ let sectionStates = JSON.parse(
     });
   });
 
+  document.querySelectorAll("details").forEach(detail => {
+
+    detail.addEventListener("toggle", () => {
+
+      const point = detail.dataset.point;
+
+      sectionStates[point] = detail.open;
+
+      localStorage.setItem(
+        "opt-buff-sections",
+        JSON.stringify(sectionStates)
+      );
+    });
+  });
+
+  updateProgress();
+}
+ 
   /* 開閉状態保存 */
   document.querySelectorAll("details").forEach(detail => {
 
@@ -443,7 +457,8 @@ let sectionStates = JSON.parse(
     document
       .getElementById("search")
       .addEventListener("input", render);
-    /* 一番下に追加 */
+    
+searchInput.addEventListener("input", render);
 
 typeFilter.addEventListener("change", render);
 
@@ -451,6 +466,8 @@ showUncheckedOnly.addEventListener(
   "change",
   render
 );
+
+render();
 
     render();
   </script>
