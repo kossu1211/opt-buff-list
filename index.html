@@ -216,6 +216,36 @@
 
     const items = [];
 
+    /* grouped生成 */
+const grouped = {};
+
+items.forEach(item => {
+
+  if (!grouped[item.point]) {
+    grouped[item.point] = [];
+  }
+
+  grouped[item.point].push(item.name);
+});
+
+/* 要素取得 */
+const content =
+  document.getElementById("content");
+
+const searchInput =
+  document.getElementById("search");
+
+const typeFilter =
+  document.getElementById("typeFilter");
+
+const showUncheckedOnly =
+  document.getElementById("showUncheckedOnly");
+
+/* 開閉状態 */
+let sectionStates = JSON.parse(
+  localStorage.getItem("opt-buff-sections") || "{}"
+);
+
     let currentPoint = "";
 
     lines.forEach(line => {
@@ -435,32 +465,16 @@ function render() {
   updateProgress();
 }
  
-  /* 開閉状態保存 */
-  document.querySelectorAll("details").forEach(detail => {
 
-    detail.addEventListener("toggle", () => {
+searchInput.addEventListener(
+  "input",
+  render
+);
 
-      const point = detail.dataset.point;
-
-      sectionStates[point] = detail.open;
-
-      localStorage.setItem(
-        "xp-buff-sections",
-        JSON.stringify(sectionStates)
-      );
-    });
-  });
-
-  updateProgress();
-}
-
-    document
-      .getElementById("search")
-      .addEventListener("input", render);
-    
-searchInput.addEventListener("input", render);
-
-typeFilter.addEventListener("change", render);
+typeFilter.addEventListener(
+  "change",
+  render
+);
 
 showUncheckedOnly.addEventListener(
   "change",
@@ -468,8 +482,7 @@ showUncheckedOnly.addEventListener(
 );
 
 render();
-
-    render();
+   
   </script>
 </body>
 </html>
