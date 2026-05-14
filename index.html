@@ -258,6 +258,16 @@
  function render() {
 
   const search = searchInput.value.toLowerCase();
+   <!-- 既存script内の searchInput の下に追加 -->
+
+const typeFilter = document.getElementById("typeFilter");
+const showUncheckedOnly =
+  document.getElementById("showUncheckedOnly");
+
+/* 開閉状態保存 */
+let sectionStates = JSON.parse(
+  localStorage.getItem("xp-buff-sections") || "{}"
+);
   const selectedType = typeFilter.value;
   const uncheckedOnly = showUncheckedOnly.checked;
 
