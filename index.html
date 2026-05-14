@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPTバフリスト</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #f1f5f9;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen p-4">
+  <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-6">
+    <h1 class="text-3xl font-bold mb-2">OPTバフリスト</h1>
+
+    <p class="text-slate-600 mb-4">
+      チェック状態はブラウザに自動保存されます。
+    </p>
+
+    <div class="mb-6 space-y-4">
+      <input
+        id="search"
+        type="text"
+        placeholder="武器・盾・鎧・アクセで検索"
+        class="w-full border rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+
+      <div class="bg-slate-100 rounded-2xl p-4">
+        <div class="flex justify-between text-sm font-medium mb-2">
+          <span>進捗</span>
+          <span id="progressText">0 / 0 (0%)</span>
+        </div>
+
+        <div class="w-full h-4 bg-white rounded-full overflow-hidden">
+          <div
+            id="progressBar"
+            class="h-4 bg-green-500 rounded-full transition-all duration-300"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content" class="space-y-6"></div>
+  </div>
+
+  <script>
+    const rawData = `
+100pt
+武器No4 ロングソード
+100pt
+武器No8 ウッドボウ
+100pt
+武器No23 ピコピコハンマー
+100pt
+武器No72 アイアンハンマー
+100pt
+武器No84 ブーケ
+100pt
+武器No125 つりざお
+100pt
+武器No137 カード
+100pt
+武器No143 マジカルロッド
+100pt
+盾No177 きのいた
+100pt
+盾No194 ランバーシールド
+100pt
+盾No248 プレゼントボックス
+100pt
+鎧No282 ネコミミフード
+100pt
+鎧No288 クイーンドレス
+100pt
+鎧No327 ハネつきぼうし
+
+250pt
+武器No1 ぼくとう
+250pt
+武器No3 ダガー
+250pt
+武器No5 スピア
+250pt
+武器No6 ウッドハンマー
+250pt
+武器No7 スタッフ
+250pt
+武器No10 きのえだ
+250pt
+武器No19 フライパン
+250pt
+武器No92 リンコロ
+250pt
+武器No104 クリスタルボール
+250pt
+武器No163 ジュエルハンマー
+250pt
+盾No176 ナベのフタ
+250pt
+盾No181 ミラーシールド
+250pt
+盾No188 ビッグドングリ
+250pt
+盾No193 ブロンズシールド
+250pt
+盾No209 ペーパーシールド
+250pt
+盾No254 ナットシールド
+250pt
+鎧No269 ナイトアーマー
+250pt
+鎧No290 うらないローブ
+250pt
+鎧No292 ドワーフアーマー
+250pt
+鎧No305 たんけんふく
+250pt
+アクセNo345 ビギナーズリング
+
+500pt
+武器No9 ウッドダイス
+
+1000pt
+武器No26 まるた
+1000pt
+武器No54 ドリルランス
+1000pt
+武器No68 ノコギリ
+1000pt
+武器No119 マジックハンド
+1000pt
+武器No151 ゴールドアックス
+1000pt
+武器No166 スターロッド
+1000pt
+盾No219 ブック
+1000pt
+盾No240 クローバー
+1000pt
+盾No251 ゴールドシールド
+1000pt
+鎧No280 シーフローブ
+1000pt
+鎧No318 ギャンブルコート
+
+1500pt
+鎧No326 みこふく
+1500pt
+アクセNo382 クラウンリング
+
+2500pt
+武器No174 ゴールドダイス
+2500pt
+鎧No274 パーティウェア
+2500pt
+鎧No276 ふうすいローブ
+2500pt
+鎧No297 モグメット
+2500pt
+アクセNo390 クローバーリング
+
+3500pt
+武器No113 ムーンロッド
+3500pt
+鎧No305 たんけんふく
+3500pt
+アクセNo372 ラッキーリング
+
+5000pt
+盾No185 ダンボール
+5000pt
+鎧No284 バニーバンド
+
+7500pt
+武器No9 ウッドダイス
+`;
+
+    const STORAGE_KEY = "opt-buff-checklist";
+
+    let checkedItems = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+
+    const lines = rawData
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const items = [];
+
+    let currentPoint = "";
+
+    lines.forEach(line => {
+      if (line.includes("pt")) {
+        currentPoint = line;
+      } else {
+        items.push({
+          point: currentPoint,
+          name: line
+        });
+      }
+    });
+
+    function saveData() {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(checkedItems)
+      );
+    }
+
+    function updateProgress() {
+      const total = items.length;
+
+      const checked = Object.values(checkedItems)
+        .filter(Boolean)
+        .length;
+
+      const percent = total > 0
+        ? Math.round((checked / total) * 100)
+        : 0;
+
+      document.getElementById("progressText").textContent =
+        `${checked} / ${total} (${percent}%)`;
+
+      document.getElementById("progressBar").style.width =
+        `${percent}%`;
+    }
+
+    function render() {
+      const search = document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+      const grouped = {};
+
+      items.forEach(item => {
+        if (
+          !search ||
+          item.name.toLowerCase().includes(search)
+        ) {
+          if (!grouped[item.point]) {
+            grouped[item.point] = [];
+          }
+
+          grouped[item.point].push(item.name);
+        }
+      });
+
+      const content = document.getElementById("content");
+
+      content.innerHTML = "";
+
+      Object.entries(grouped).forEach(([point, entries]) => {
+        const section = document.createElement("div");
+
+        section.className =
+          "border rounded-2xl p-4 bg-slate-50";
+
+        section.innerHTML = `
+          <h2 class="text-xl font-bold mb-4 text-blue-600">
+            ${point}
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            ${entries.map(entry => `
+              <label
+                class="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"
+              >
+                <input
+                  type="checkbox"
+                  class="w-5 h-5"
+                  data-item="${entry}"
+                  ${checkedItems[entry] ? "checked" : ""}
+                />
+
+                <span class="${
+                  checkedItems[entry]
+                    ? "line-through text-slate-400"
+                    : "text-slate-700"
+                }">
+                  ${entry}
+                </span>
+              </label>
+            `).join("")}
+          </div>
+        `;
+
+        content.appendChild(section);
+      });
+
+      document.querySelectorAll("input[type='checkbox']")
+        .forEach(checkbox => {
+          checkbox.addEventListener("change", e => {
+            const item = e.target.dataset.item;
+
+            checkedItems[item] = e.target.checked;
+
+            saveData();
+            render();
+            updateProgress();
+          });
+        });
+
+      updateProgress();
+    }
+
+    document
+      .getElementById("search")
+      .addEventListener("input", render);
+
+    render();
+  </script>
+</body>
+</html>
