@@ -332,29 +332,7 @@ function render() {
   }
 }
 
-  if (entry.startsWith("武器")) {
-    return "#fef2f2";
-  }
-
-  if (entry.startsWith("盾")) {
-    return "#eff6ff";
-  }
-
-  if (entry.startsWith("鎧")) {
-    return "#f0fdf4";
-  }
-
-  if (entry.startsWith("アクセ")) {
-    return "#fefce8";
-  }
-
-  if (entry.startsWith("ペット")) {
-    return "#faf5ff";
-  }
-
-  return "#ffffff";
-};
-  
+ 
   content.innerHTML = "";
 
   Object.entries(grouped).forEach(([point, entries]) => {
@@ -476,7 +454,7 @@ function render() {
                     : "text-slate-700"
                 }">
 
-                 ${entry.replace(/^(武器|盾|鎧|アクセ|ペット)/, (type) => {
+ ${entry.replace(/^(武器|盾|鎧|アクセ|ペット)/, (type) => {
   const badge = getTypeBadge(type);
 
   return `
@@ -496,26 +474,6 @@ function render() {
     </span>
   `;
 })}
-    const badge = getTypeBadge(type);
-
-    return `
-      <span
-        style="
-          background:${badge.bg};
-          color:${badge.text};
-          padding:2px 8px;
-          border-radius:999px;
-          font-size:12px;
-          font-weight:700;
-          margin-right:8px;
-          display:inline-block;
-        "
-      >
-        ${type}
-      </span>
-    `;
-  }
-)}
 
             
 
