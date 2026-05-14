@@ -313,7 +313,7 @@ function render() {
 
       const matchesUnchecked =
         uncheckedOnly
-          ? !checkedItems[entry]
+          ? !checkedItems[`${point}-${entry}`]
           : true;
 
       return (
@@ -400,12 +400,12 @@ function render() {
                 <input
                   type="checkbox"
                   class="w-5 h-5"
-                  ${checkedItems[entry] ? "checked" : ""}
-                  data-item="${entry}"
+                  ${checkedItems[`${point}-${entry}`] ? "checked" : ""}
+                 data-item="${point}-${entry}"
                 />
 
                 <span class="${
-                  checkedItems[entry]
+                 checkedItems[`${point}-${entry}`]
                     ? "line-through text-slate-400"
                     : "text-slate-700"
                 }">
