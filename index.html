@@ -258,16 +258,11 @@ items.forEach(item => {
     grouped[item.point] = [];
   }
 
-  grouped[item.point].push(item.name);
+grouped[item.point].push(item.name);
 
 });
 
-    
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(checkedItems)
-      );
-    }
+
     function saveChecklist() {
   localStorage.setItem(
     "opt-buff-checklist",
