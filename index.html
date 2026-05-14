@@ -287,16 +287,6 @@ grouped[item.point].push(item.name);
 
   });
 
-  const percent = total > 0
-    ? Math.round((checked / total) * 100)
-    : 0;
-
-  document.getElementById("progressText").textContent =
-    `${checked} / ${total} (${percent}%)`;
-
-  document.getElementById("progressBar").style.width =
-    `${percent}%`;
-}
 
       const percent = total > 0
         ? Math.round((checked / total) * 100)
