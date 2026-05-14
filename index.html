@@ -308,6 +308,31 @@ function render() {
   const uncheckedOnly =
     showUncheckedOnly.checked;
 
+  const getTypeColor = (entry) => {
+
+  if (entry.startsWith("武器")) {
+    return "#fef2f2";
+  }
+
+  if (entry.startsWith("盾")) {
+    return "#eff6ff";
+  }
+
+  if (entry.startsWith("鎧")) {
+    return "#f0fdf4";
+  }
+
+  if (entry.startsWith("アクセ")) {
+    return "#fefce8";
+  }
+
+  if (entry.startsWith("ペット")) {
+    return "#faf5ff";
+  }
+
+  return "#ffffff";
+};
+  
   content.innerHTML = "";
 
   Object.entries(grouped).forEach(([point, entries]) => {
@@ -404,9 +429,14 @@ function render() {
 
             ${filtered.map(entry => `
 
-              <label
-                class="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"
-              >
+             <label
+  class="
+    flex items-center gap-3
+    rounded-xl p-3 shadow-sm
+    hover:shadow-md transition
+  "
+  style="background-color:${getTypeColor(entry)}"
+>
 
                 <input
                   type="checkbox"
