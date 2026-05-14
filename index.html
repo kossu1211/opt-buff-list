@@ -309,6 +309,49 @@ function render() {
 
   const getTypeColor = (entry) => {
 
+    const getTypeBadge = (entry) => {
+
+  if (entry.startsWith("武器")) {
+    return {
+      bg: "#fee2e2",
+      text: "#b91c1c"
+    };
+  }
+
+  if (entry.startsWith("盾")) {
+    return {
+      bg: "#dbeafe",
+      text: "#1d4ed8"
+    };
+  }
+
+  if (entry.startsWith("鎧")) {
+    return {
+      bg: "#dcfce7",
+      text: "#15803d"
+    };
+  }
+
+  if (entry.startsWith("アクセ")) {
+    return {
+      bg: "#fef9c3",
+      text: "#a16207"
+    };
+  }
+
+  if (entry.startsWith("ペット")) {
+    return {
+      bg: "#f3e8ff",
+      text: "#7e22ce"
+    };
+  }
+
+  return {
+    bg: "#e5e7eb",
+    text: "#374151"
+  };
+};
+
   if (entry.startsWith("武器")) {
     return "#fef2f2";
   }
@@ -433,10 +476,11 @@ function render() {
     flex items-center gap-3
     rounded-xl p-3 shadow-sm
     hover:shadow-md transition
- style="
-  background-color:${getTypeColor(entry)};
-  border-left:6px solid #888;
-"
+    "
+    
+   style="background-color:${getTypeColor(entry)}"
+   
+  
 >
 
                 <input
@@ -452,9 +496,31 @@ function render() {
                     : "text-slate-700"
                 }">
 
-                  ${entry}
+                  ${entry.replace(
+  /^(武器|盾|鎧|アクセ|ペット)/,
+  (type) => {
+    const badge = getTypeBadge(type);
 
-                </span>
+    return `
+      <span
+        style="
+          background:${badge.bg};
+          color:${badge.text};
+          padding:2px 8px;
+          border-radius:999px;
+          font-size:12px;
+          font-weight:700;
+          margin-right:8px;
+          display:inline-block;
+        "
+      >
+        ${type}
+      </span>
+    `;
+  }
+)}
+
+            
 
               </label>
 
